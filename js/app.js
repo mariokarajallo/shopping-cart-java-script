@@ -14,6 +14,12 @@ function cargarEventListener(){
     //elimina cursos del carrito
     carrito.addEventListener('click',eliminarCurso);
 
+    //cargar contenido del carrito de compras al cargar la pagina
+    document.addEventListener('DOMContentLoaded', () => {
+        articulosCarrito = JSON.parse( localStorage.getItem('carrito')) || [];//si no hay nada en el local storage, que cargue un arreglo vacio
+        carritoHTML();
+    });
+
     // vaciar el carrito
     vaciarCarritoBtn.addEventListener('click', () => {
         articulosCarrito=[];// resetea el arreglo
@@ -87,6 +93,8 @@ function leerDatosCurso(curso){
 
     console.log(articulosCarrito);
     carritoHTML();
+    // Notificar al usuario que el producto se agregó
+    mostrarNotificacion(`${infoCurso.titulo} agregado al carrito`);
 }
 
 // muestra el carrito de compra en el HTML
@@ -112,8 +120,52 @@ function carritoHTML(){
 
         //agrega el HTML del carrito en el tbody
         contenedorCarrito.appendChild(row);
-    })
+    });
+
+    //agregar carrito de compras al local storage
+    sincronizarStorage();
+
 }
+
+function sincronizarStorage(){
+    localStorage.setItem('carrito', JSON.stringify(articulosCarrito));
+}
+
+// Muestra una notificación temporal en pantalla
+function mostrarNotificacion(mensaje){
+    // Elimina notificaciones previas para evitar superposición
+    const previa = document.querySelector('.notificacion-carrito');
+    if (previa) previa.remove();
+
+    const aviso = document.createElement('div');
+    aviso.className = 'notificacion-carrito';
+    aviso.setAttribute('role','status');
+    aviso.setAttribute('aria-live','polite');
+    aviso.textContent = mensaje;
+
+    // Estilos inline para no depender de CSS externo
+    aviso.style.position = 'fixed';
+    aviso.style.right = '20px';
+    aviso.style.bottom = '20px';
+    aviso.style.padding = '10px 14px';
+    aviso.style.background = 'rgba(0,0,0,0.85)';
+    aviso.style.color = '#fff';
+    aviso.style.borderRadius = '6px';
+    aviso.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+    aviso.style.zIndex = 10000;
+    aviso.style.fontFamily = 'sans-serif';
+    aviso.style.fontSize = '14px';
+
+    document.body.appendChild(aviso);
+
+    // Desvanecer y remover después de 2 segundos
+    setTimeout(() => {
+        aviso.style.transition = 'opacity 0.3s ease';
+        aviso.style.opacity = '0';
+        setTimeout(() => aviso.remove(), 300);
+    }, 2000);
+}
+
 
 // ELimina los cursos del tbody
 function limpiarHTML(){

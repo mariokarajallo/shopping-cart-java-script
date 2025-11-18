@@ -21,6 +21,9 @@ Para ver la demo: [Shopping Cart](https://jsproyecto1.netlify.app/)
 - Eliminar un ítem individual del carrito.
 - Vaciar el carrito completamente.
 
+- Persistencia del carrito usando `localStorage` para mantener los ítems entre recargas de página.
+- Notificación visual y accesible al usuario cuando se agrega un ítem al carrito (mensaje temporal en pantalla).
+
 ## **Tecnologías utilizadas**
 
 - JavaScript (DOM, eventos y manipulación de arrays).
@@ -63,6 +66,10 @@ El comportamiento principal del carrito está implementado en `js/app.js` y sigu
 - Al hacer clic en el enlace de borrado, se filtra `articulosCarrito` para quitar el elemento por `id` y se vuelve a renderizar el HTML del carrito.
 - El botón "Vaciar carrito" reinicia `articulosCarrito` a un arreglo vacío y limpia el HTML.
 
+- Al cargar la página (`DOMContentLoaded`) el script intenta recuperar el carrito guardado en `localStorage` y lo renderiza automáticamente.
+- Cada vez que se modifica el carrito se sincroniza en `localStorage` mediante `localStorage.setItem('carrito', ...)`.
+- Al agregar un ítem, además de actualizar el arreglo y renderizar, se muestra una notificación temporal en pantalla (función `mostrarNotificacion`) con `role="status"` y `aria-live="polite"` para accesibilidad.
+
 Funciones clave en `js/app.js`:
 
 - `cargarEventListener()` — registra los event listeners principales.
@@ -71,6 +78,8 @@ Funciones clave en `js/app.js`:
 - `carritoHTML()` — renderiza el contenido del carrito en el DOM.
 - `eliminarCurso(e)` — elimina un curso por `data-id`.
 - `limpiarHTML()` — limpia el contenido del `tbody` del carrito.
+ - `sincronizarStorage()` — guarda `articulosCarrito` en `localStorage`.
+ - `mostrarNotificacion(mensaje)` — crea una notificación temporal en pantalla cuando se agrega un ítem.
 
 ## **Estructura de archivos**
 
